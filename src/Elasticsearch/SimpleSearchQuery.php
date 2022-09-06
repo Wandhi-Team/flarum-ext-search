@@ -8,6 +8,8 @@ class SimpleSearchQuery implements Query
 {
     protected float $boost = 1;
     protected ?string $analyzer = null;
+    protected array $fields;
+    protected string $value;
 
     public static function create(array $field, string $value)
     {
@@ -29,20 +31,23 @@ class SimpleSearchQuery implements Query
     }
 
     public function __construct(
-        protected array $fields,
-        protected string $value
-    ) {
+        array  $fields,
+        string $value
+    )
+    {
+        $this->value  = $value;
+        $this->fields = $fields;
     }
 
     public function toArray(): array
     {
         return [
             'simple_query_string' => [
-                'query' => $this->value,
-                'fields' => $this->fields,
-                'analyzer' => $this->analyzer,
+                'query'            => $this->value,
+                'fields'           => $this->fields,
+                'analyzer'         => $this->analyzer,
                 'default_operator' => 'AND',
-                'boost' => $this->boost
+                'boost'            => $this->boost
             ]
         ];
     }

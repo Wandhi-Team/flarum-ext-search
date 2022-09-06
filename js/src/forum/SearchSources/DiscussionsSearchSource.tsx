@@ -2,7 +2,7 @@ import app from 'flarum/forum/app';
 import highlight from 'flarum/common/helpers/highlight';
 import LinkButton from 'flarum/common/components/LinkButton';
 import Link from 'flarum/common/components/Link';
-import { SearchSource } from 'flarum/forum/components/Search';
+import {SearchSource} from 'flarum/forum/components/Search';
 import type Mithril from 'mithril';
 
 /**

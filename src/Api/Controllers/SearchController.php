@@ -4,8 +4,8 @@ namespace Blomstra\Search\Api\Controllers;
 
 use Blomstra\Search\Elasticsearch\MatchPhraseQuery;
 use Blomstra\Search\Elasticsearch\MatchQuery;
-use Blomstra\Search\Save\Document as ElasticDocument;
 use Blomstra\Search\Elasticsearch\TermsQuery;
+use Blomstra\Search\Save\Document as ElasticDocument;
 use Elasticsearch\Client;
 use Flarum\Api\Controller\ListDiscussionsController;
 use Flarum\Api\Serializer\DiscussionSerializer;
@@ -33,12 +33,17 @@ class SearchController extends ListDiscussionsController
 
     protected array $translateSort = [
         'lastPostedAt' => 'updated_at',
-        'createdAt' => 'created_at',
+        'createdAt'    => 'created_at',
         'commentCount' => 'comment_count'
     ];
+    protected Client $elastic;
+    protected UrlGenerator $uri;
 
-    public function __construct(protected Client $elastic, protected UrlGenerator $uri)
-    {}
+    public function __construct(Client $elastic, UrlGenerator $uri)
+    {
+        $this->uri     = $uri;
+        $this->elastic = $elastic;
+    }
 
     protected function data(ServerRequestInterface $request, Document $document)
     {
@@ -51,20 +56,19 @@ class SearchController extends ListDiscussionsController
 
         $search = $this->getSearch($filters);
 
-        $limit = $this->extractLimit($request);
+        $limit  = $this->extractLimit($request);
         $offset = $this->extractOffset($request);
 
         $include = array_merge($this->extractInclude($request), ['state']);
 
         $filterQuery = BoolQuery::create();
 
-        if (! empty($search)) {
+        if (!empty($search)) {
             $filterQuery
                 // @todo commented out to use only partial matching for now
                 ->add($this->sentenceMatch($search))
                 ->add($this->wordMatch($search, 'and'))
-                ->add($this->wordMatch($search, 'or'))
-//                ->add($this->partialMatch($search))
+                ->add($this->wordMatch($search, 'or'))//                ->add($this->partialMatch($search))
             ;
         }
 
@@ -91,7 +95,7 @@ class SearchController extends ListDiscussionsController
 
             // If the first level of the relationship wasn't explicitly included,
             // add it so the code below can look for it
-            if (! in_array('mostRelevantPost', $include)) {
+            if (!in_array('mostRelevantPost', $include)) {
                 $include[] = 'mostRelevantPost';
             }
         }
@@ -101,17 +105,17 @@ class SearchController extends ListDiscussionsController
         $results = Collection::make(Arr::get($response, 'hits.hits'))
             ->map(function ($hit) {
                 $type = $hit['_source']['type'];
-                $id = Str::after($hit['_source']['id'], "$type:");
+                $id   = Str::after($hit['_source']['id'], "$type:");
 
                 if ($type === 'posts') {
                     return [
                         'most_relevant_post_id' => $id,
-                        'weight' => Arr::get($hit, 'sort.0')
+                        'weight'                => Arr::get($hit, 'sort.0')
                     ];
                 } else {
                     return [
                         'discussion_id' => $id,
-                        'weight' => Arr::get($hit, 'sort.0')
+                        'weight'        => Arr::get($hit, 'sort.0')
                     ];
                 }
             });
@@ -132,7 +136,7 @@ class SearchController extends ListDiscussionsController
             ->select('discussions.*')
             ->join('posts', 'posts.discussion_id', 'discussions.id')
             // Extra safety to prevent leaking hidden discussion (titles) towards search results.
-            ->when($actor->isGuest() || ! $actor->hasPermission('discussion.hide'), fn($query) => $query->whereNull('discussions.hidden_at'))
+            ->when($actor->isGuest() || !$actor->hasPermission('discussion.hide'), fn($query) => $query->whereNull('discussions.hidden_at'))
             ->where(function ($query) use ($results) {
                 $query
                     ->whereIn('discussions.id', $results->pluck('discussion_id')->filter())
@@ -142,11 +146,11 @@ class SearchController extends ListDiscussionsController
             ->each(function (Discussion $discussion) use ($results) {
                 if (in_array($discussion->id, $results->pluck('discussion_id')->toArray())) {
                     $discussion->most_relevant_post_id = $discussion->first_post_id;
-                    $discussion->weight = $results->firstWhere('discussion_id', $discussion->id)['weight'] ?? 0;
+                    $discussion->weight                = $results->firstWhere('discussion_id', $discussion->id)['weight'] ?? 0;
                 } else {
-                    $post = $discussion->posts()->whereIn('id', $results->pluck('most_relevant_post_id'))->first();
-                    $discussion->most_relevant_post_id = $post?->id ?? $discussion->first_post_id;
-                    $discussion->weight = $results->firstWhere('most_relevant_post_id', $post?->id)['weight'] ?? 0;
+                    $post                              = $discussion->posts()->whereIn('id', $results->pluck('most_relevant_post_id'))->first();
+                    $discussion->most_relevant_post_id = ($post ? $post->id : '') ?? $discussion->first_post_id;
+                    $discussion->weight                = $results->firstWhere('most_relevant_post_id', $post ? $post->id : '')['weight'] ?? 0;
                 }
             })
             ->keyBy('id')

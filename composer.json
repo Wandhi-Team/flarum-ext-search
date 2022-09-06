@@ -1,5 +1,5 @@
 {
-    "name": "blomstra/search",
+    "name": "maxzhang666/search",
     "description": "Replaces Flarum search with one powered by an elastic search server.",
     "keywords": [
         "extension",
@@ -24,7 +24,7 @@
         }
     ],
     "require": {
-        "php": ">= 8.0",
+        "php": ">=7.4",
         "flarum/core": "^1.2.0",
         "elasticsearch/elasticsearch": "7.*",
         "spatie/elasticsearch-query-builder": "^1.3.0"

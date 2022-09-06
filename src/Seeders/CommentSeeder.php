@@ -58,20 +58,20 @@ class CommentSeeder extends Seeder
     public function toDocument(Model $model): Document
     {
         $document = new Document([
-            'type' => $this->type(),
-            'id' => $this->type() . ':' . $model->id,
-            'content' => $model->content,
-            'content_partial' => $model->content,
-            'created_at' => $model->created_at?->toAtomString(),
-            'updated_at' => $model->edited_at?->toAtomString(),
-            'is_private' => $model->is_private,
-            'user_id' => $model->user_id,
-            'groups' => $this->groupsForDiscussion($model->discussion),
-            'comment_count' => $model->discussion->comment_count,
-        ]);
+                                     'type'            => $this->type(),
+                                     'id'              => $this->type() . ':' . $model->id,
+                                     'content'         => $model->content,
+                                     'content_partial' => $model->content,
+                                     'created_at'      => $model->created_at ? $model->created_at->toAtomString() : '',
+                                     'updated_at'      => $model->edited_at ? $model->edited_at->toAtomString() : '',
+                                     'is_private'      => $model->is_private,
+                                     'user_id'         => $model->user_id,
+                                     'groups'          => $this->groupsForDiscussion($model->discussion),
+                                     'comment_count'   => $model->discussion->comment_count,
+                                 ]);
 
         if ($this->extensionEnabled('fof-byobu')) {
-            $document['recipient_users'] = $model->discussion->recipientUsers->pluck('id')->toArray();
+            $document['recipient_users']  = $model->discussion->recipientUsers->pluck('id')->toArray();
             $document['recipient_groups'] = $model->discussion->recipientGroups->pluck('id')->toArray();
         }
 

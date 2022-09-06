@@ -7,8 +7,11 @@ use Throwable;
 class SeedingException extends \Exception
 {
 
-    public function __construct($message = "", public array $items, $code = 0, Throwable $previous = null)
+    public array $items;
+
+    public function __construct($message = "", array $items, $code = 0, Throwable $previous = null)
     {
+        $this->items = $items;
         parent::__construct($message, $code, $previous);
     }
 }

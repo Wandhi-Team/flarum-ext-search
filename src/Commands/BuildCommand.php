@@ -5,7 +5,6 @@ namespace Blomstra\Search\Commands;
 use Blomstra\Search\Jobs\Job;
 use Blomstra\Search\Jobs\SavingJob;
 use Blomstra\Search\Seeders\Seeder;
-use Carbon\Carbon;
 use Elasticsearch\Client;
 use Flarum\Settings\SettingsRepositoryInterface;
 use Illuminate\Console\Command;

@@ -2,7 +2,7 @@ import app from 'flarum/forum/app';
 
 import Search from 'flarum/forum/components/Search';
 
-import { extend } from 'flarum/common/extend';
+import {extend} from 'flarum/common/extend';
 import ItemList from 'flarum/common/utils/ItemList';
 
 import DiscussionsSearchSource from './SearchSources/DiscussionsSearchSource';

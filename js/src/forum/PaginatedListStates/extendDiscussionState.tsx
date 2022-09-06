@@ -1,6 +1,6 @@
 import app from 'flarum/forum/app';
 
-import { override } from 'flarum/common/extend';
+import {override} from 'flarum/common/extend';
 
 import DiscussionListState from 'flarum/forum/states/DiscussionListState';
 
