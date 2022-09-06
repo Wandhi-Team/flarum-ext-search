@@ -10,7 +10,7 @@ class TermsQuery implements Query
 
     protected array $values;
 
-    public static function create(string $field, array $values): static
+    public static function create(string $field, array $values): TermsQuery
     {
         return new self($field, $values);
     }
