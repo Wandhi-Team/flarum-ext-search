@@ -27,7 +27,7 @@
         "php": ">=7.4",
         "flarum/core": "^1.2.0",
         "elasticsearch/elasticsearch": "7.*",
-        "maxzhang666/elasticsearch-query-builder": "1.1"
+        "maxzhang666/elasticsearch-query-builder": "1.2"
     },
     "extra": {
         "flarum-extension": {
