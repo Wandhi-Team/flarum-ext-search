@@ -63,7 +63,7 @@ class CommentSeeder extends Seeder
                                      'content'         => $model->content,
                                      'content_partial' => $model->content,
                                      'created_at'      => $model->created_at ? $model->created_at->toAtomString() : '',
-                                     'updated_at'      => $model->edited_at ? $model->edited_at->toAtomString() : '',
+                                     'updated_at'      => $model->edited_at ? $model->edited_at->toAtomString() : $model->created_at->toAtomString(),
                                      'is_private'      => $model->is_private,
                                      'user_id'         => $model->user_id,
                                      'groups'          => $this->groupsForDiscussion($model->discussion),
