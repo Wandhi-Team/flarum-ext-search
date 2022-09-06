@@ -25,9 +25,9 @@ class Provider extends AbstractServiceProvider
     public function register()
     {
         $this->container->tag([
-            Seeders\DiscussionSeeder::class,
-            Seeders\CommentSeeder::class,
-        ], 'blomstra.search.seeders');
+                                  Seeders\DiscussionSeeder::class,
+                                  Seeders\CommentSeeder::class,
+                              ], 'blomstra.search.seeders');
 
         /** @var SettingsRepositoryInterface $settings */
         $settings = $this->container->make(SettingsRepositoryInterface::class);
@@ -42,6 +42,7 @@ class Provider extends AbstractServiceProvider
             if ($config->inDebugMode()) {
                 $builder->setLogger($container->make(LoggerInterface::class));
             }
+            $builder->setLogger($container->make(LoggerInterface::class));
 
             if ($settings->get('blomstra-search.elastic-username')) {
                 $builder->setBasicAuthentication(
@@ -67,7 +68,7 @@ class Provider extends AbstractServiceProvider
                 $exclude = resolve('flarum.api_client.exclude_middleware');
 
                 $middlewareStack = array_filter(resolve('flarum.api.middleware'), function ($middlewareClass) use ($exclude) {
-                    return ! in_array($middlewareClass, $exclude);
+                    return !in_array($middlewareClass, $exclude);
                 });
 
                 foreach ($middlewareStack as $middleware) {
