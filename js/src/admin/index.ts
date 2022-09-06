@@ -1,6 +1,6 @@
 import app from 'flarum/admin/app';
 
-app.initializers.add('blomstra-search', () => {
+app.initializers.add('maxzhang666-search', () => {
   const languages = new Map();
   [
     'arabic',
