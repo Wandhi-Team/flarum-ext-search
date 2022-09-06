@@ -43,7 +43,7 @@ app.initializers.add('maxzhang666-search', () => {
   });
 
   app.extensionData
-    .for('blomstra-search')
+    .for('maxzhang666-search')
     .registerSetting({
       setting: 'blomstra-search.elastic-endpoint',
       label: app.translator.trans('blomstra-search.admin.elastic-endpoint'),
